@@ -8,8 +8,8 @@ const width = $(window).width();
 const app = new PIXI.Application();
 
 await app.init({
-    background: "#1099bb",
-    resizeto: window,
+    background: "#ffffea",
+    resizeTo: window,
 });
 
 document.body.appendChild(app.canvas);
