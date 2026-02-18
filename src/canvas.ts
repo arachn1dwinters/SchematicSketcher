@@ -23,6 +23,7 @@ app.ticker.add((delta) => {
 
 // Draw grid of dots
 const graphics = new PIXI.Graphics();
+graphics.cullable = true;
 
 for (let i = 0; i < 100; i++) {
     for (let e = 0; e < 100; e++) {
