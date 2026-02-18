@@ -10,28 +10,32 @@ const app = new PIXI.Application();
 await app.init({
     background: "#ffffea",
     resizeTo: window,
+    antialias: true,
 });
 
 document.body.appendChild(app.canvas);
-
-// Load the texture FIRST
-const texture = await PIXI.Assets.load('/sample.png');
-
-// Then create sprite from the loaded texture
-let basicText = new PIXI.Text({
-    text: 'Hello Pixi!',
-    style: {
-        fontFamily: 'Arial',
-        fontSize: 24,
-        fill: 0xff1010,
-        align: 'center',
-    }
-});
-app.stage.addChild(basicText);
 
 // Animate
 let elapsed = 0.0;
 app.ticker.add((delta) => {
     elapsed += delta;
-    basicText.rotation += 0.1 * delta.deltaTime;
 });
+
+// Draw grid of dots
+const graphics = new PIXI.Graphics();
+
+for (let i = 0; i < 100; i++) {
+    for (let e = 0; e < 100; e++) {
+        const cornerIncrements = 5;
+        const corner = (i % cornerIncrements == 0 && e % cornerIncrements == 0);
+        if (!corner) {
+            graphics.circle(20*e + 10, 20*i + 10, 2.5);
+            graphics.fill({ r: 0, g: 0, b: 0, a: 0.1 });
+        } else {
+            graphics.circle(20 * e + 10, 20 * i + 10, 3);
+            graphics.fill({ r: 0, g: 0, b: 0, a: 0.2 });
+        }
+    }
+}
+
+app.stage.addChild(graphics);
