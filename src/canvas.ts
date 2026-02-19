@@ -49,23 +49,49 @@ for (let i = 0; i < 100; i++) {
 app.stage.addChild(bgGraphics);
 
 // Wire
-let wireStart : PIXI.Point = null;
-const wireGraphics = new PIXI.Graphics();
+let currentWireTicker : PIXI.Ticker = null;
 
 $(window).on('click', () => {
     if (CurrentAction === ACTIONS.Wire) {
         currentlyDrawing = !currentlyDrawing;
-        if (currentlyDrawing && wireStart == null) {
-            wireStart = new PIXI.Point(0, 0);
+        if (currentlyDrawing) {
+            const wireTicker = new PIXI.Ticker;
+            currentWireTicker = wireTicker;
+            drawWire(wireTicker);
+        } else {
+            currentWireTicker.destroy();
         }
     }
 })
 
-app.ticker.add((time) => {
-    if (currentlyDrawing && CurrentAction === ACTIONS.Wire) {
-        wireGraphics.roundRect(mousePosition.x, mousePosition.y, 15, 15, 20);
-        wireGraphics.fill(0x35cc5a);
-    }
-});
 
-app.stage.addChild(wireGraphics);
+function drawWire(wireTicker : PIXI.Ticker) {
+    let wireStart = new PIXI.Point(mousePosition.x, mousePosition.y);
+    const wireGraphics = new PIXI.Graphics();
+
+    wireTicker.add((time) => {
+        if (currentlyDrawing && CurrentAction === ACTIONS.Wire) {
+            wireGraphics.clear();
+            const width = mousePosition.x - wireStart.x;
+            const height = mousePosition.y - wireStart.y;
+            const thickness = 10;
+            // Draw horizontal
+            if (width > 0) {
+                wireGraphics.roundRect(wireStart.x, wireStart.y, width, thickness, 20);
+            } else {
+                wireGraphics.roundRect(wireStart.x + width, wireStart.y, Math.abs(width), thickness, 20);
+            }
+            // Draw veritcal
+            const verticalWireStart = new PIXI.Point(wireStart.x + width, wireStart.y);
+            if (height > 0) {
+                wireGraphics.roundRect(verticalWireStart.x, verticalWireStart.y, thickness, height, 20);
+            } else {
+                wireGraphics.roundRect(verticalWireStart.x, verticalWireStart.y + height, thickness, Math.abs(height), 20);
+            }
+            wireGraphics.fill(0x35cc5a);
+        }
+    });
+    wireTicker.start();
+
+    app.stage.addChild(wireGraphics);
+}
