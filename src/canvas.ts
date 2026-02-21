@@ -50,10 +50,10 @@ app.stage.addChild(bgGraphics);
 
 // Wire
 let currentWireTicker: PIXI.Ticker = null;
-let flipped = true;
+let flipped = false;
 $(window).on("keydown", (e) => {
   var code = e.keycode || e.which;
-  if (code == 82) {
+  if (code === 82) {
     flipped = !flipped;
   }
 });
@@ -97,7 +97,7 @@ function drawWire(wireTicker: PIXI.Ticker) {
         wireGraphics.roundRect(
           horizontalWireStart.x + width,
           horizontalWireStart.y,
-          Math.abs(width),
+          Math.abs(width) + (!flipped ? thickness : 0),
           thickness,
           20,
         );
@@ -111,13 +111,13 @@ function drawWire(wireTicker: PIXI.Ticker) {
           verticalWireStart.x,
           verticalWireStart.y,
           thickness,
-          height,
+          height + (!flipped ? thickness : 0),
           20,
         );
       } else {
         wireGraphics.roundRect(
           verticalWireStart.x,
-          verticalWireStart.y + height + thickness,
+          verticalWireStart.y + height + (flipped ? thickness : 0),
           thickness,
           Math.abs(height),
           20,
