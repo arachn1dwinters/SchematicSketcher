@@ -55,6 +55,7 @@ $(window).on("keydown", (e) => {
   var code = e.keycode || e.which;
   if (code === 82) {
     flipped = !flipped;
+    console.log(flipped);
   }
 });
 
