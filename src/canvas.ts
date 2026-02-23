@@ -37,10 +37,10 @@ for (let i = 0; i < 100; i++) {
     const cornerIncrements = 5;
     const corner = i % cornerIncrements == 0 && e % cornerIncrements == 0;
     if (!corner) {
-      bgGraphics.circle(20 * e, 20 * i, 2.5);
+      bgGraphics.circle(20 * e + 5, 20 * i + 5, 2.5);
       bgGraphics.fill({ r: 0, g: 0, b: 0, a: 0.1 });
     } else {
-      bgGraphics.circle(20 * e, 20 * i, 3);
+      bgGraphics.circle(20 * e + 5, 20 * i + 5, 3);
       bgGraphics.fill({ r: 0, g: 0, b: 0, a: 0.2 });
     }
   }
