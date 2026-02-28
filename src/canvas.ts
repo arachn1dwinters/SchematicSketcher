@@ -8,7 +8,7 @@ $(document).mousemove((e) => {
   mousePosition.y = e.pageY - (e.pageY % 20);
 });
 
-// Constants etc.
+// Potential user actions
 enum ACTIONS {
   Wire,
   Part,
@@ -48,16 +48,43 @@ for (let i = 0; i < 100; i++) {
 
 app.stage.addChild(bgGraphics);
 
-// Wire
-let currentWireTicker: PIXI.Ticker = null;
+// Wires
+
+class Wire {
+  horizontalStart: PIXI.Point;
+  verticalStart: PIXI.Point;
+  width: number;
+  height: number;
+
+  constructor(
+    horizontalStart: PIXI.Point,
+    verticalStart: PIXI.Point,
+    width: number,
+    height: number,
+  ) {
+    this.horizontalStart = horizontalStart;
+    this.verticalStart = verticalStart;
+    this.width = width;
+    this.height = height;
+  }
+}
+
+const wires: Wire[] = [];
+
 let flipped = false;
 $(window).on("keydown", (e) => {
   var code = e.keycode || e.which;
   if (code === 82) {
+    // "r" pressed
     flipped = !flipped;
-    console.log(flipped);
   }
 });
+
+let currentWireTicker: PIXI.Ticker = null;
+let currentWidth: number = null;
+let currentHeight: number = null;
+let currentHorizontalStart: PIXI.Point = null;
+let currentVerticalStart: PIXI.Point = null;
 
 $(window).on("click", () => {
   if (CurrentAction === ACTIONS.Wire) {
@@ -67,7 +94,19 @@ $(window).on("click", () => {
       currentWireTicker = wireTicker;
       drawWire(wireTicker);
     } else {
+      wires.push(
+        new Wire(
+          currentHorizontalStart,
+          currentVerticalStart,
+          currentWidth,
+          currentHeight,
+        ),
+      );
       currentWireTicker.destroy();
+      currentWidth = null;
+      currentHeight = null;
+      currentHorizontalStart = null;
+      currentVerticalStart = null;
     }
   }
 });
@@ -80,7 +119,9 @@ function drawWire(wireTicker: PIXI.Ticker) {
     if (currentlyDrawing && CurrentAction === ACTIONS.Wire) {
       wireGraphics.clear();
       const width = mousePosition.x - wireStart.x;
+      currentWidth = width;
       const height = mousePosition.y - wireStart.y;
+      currentHeight = height;
       const thickness = 10;
       // Draw horizontal
       const horizontalWireStart = flipped
