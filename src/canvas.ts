@@ -55,21 +55,25 @@ class Wire {
   verticalStart: PIXI.Point;
   width: number;
   height: number;
+  pointsFilled: PIXI.Point[];
 
   constructor(
     horizontalStart: PIXI.Point,
     verticalStart: PIXI.Point,
     width: number,
     height: number,
+    pointsFilled: PIXI.Point[],
   ) {
     this.horizontalStart = horizontalStart;
     this.verticalStart = verticalStart;
     this.width = width;
     this.height = height;
+    this.pointsFilled = pointsFilled;
   }
 }
 
 const wires: Wire[] = [];
+const wiredPoints: PIXI.Point[] = [];
 
 let flipped = false;
 $(window).on("keydown", (e) => {
@@ -80,11 +84,13 @@ $(window).on("keydown", (e) => {
   }
 });
 
-let currentWireTicker: PIXI.Ticker = null;
-let currentWidth: number = null;
-let currentHeight: number = null;
-let currentHorizontalStart: PIXI.Point = null;
-let currentVerticalStart: PIXI.Point = null;
+let currentWireTicker: PIXI.Ticker;
+let currentWidth: number;
+let currentHeight: number;
+let currentHorizontalStart: PIXI.Point;
+let currentVerticalStart: PIXI.Point;
+let currentPointsFilled: PIXI.Point[] = [];
+let currentWireGraphics: PIXI.Graphics;
 
 $(window).on("click", () => {
   if (CurrentAction === ACTIONS.Wire) {
@@ -92,14 +98,28 @@ $(window).on("click", () => {
     if (currentlyDrawing) {
       const wireTicker = new PIXI.Ticker();
       currentWireTicker = wireTicker;
-      drawWire(wireTicker);
+      currentWireGraphics = drawWire(wireTicker);
     } else {
+      for (let i = 0; i < wires.length; i++) {
+        const wire = wires[i];
+
+        for (let e = 0; e < currentPointsFilled.length; e++) {
+          const pointOnWire = currentPointsFilled[e];
+          const contains = pointsListContains(wire.pointsFilled, pointOnWire);
+          if (contains) {
+            currentWireGraphics.circle(pointOnWire.x, pointOnWire.y, 10);
+            currentWireGraphics.fill(0x35cc5a);
+          }
+        }
+      }
+
       wires.push(
         new Wire(
           currentHorizontalStart,
           currentVerticalStart,
           currentWidth,
           currentHeight,
+          currentPointsFilled,
         ),
       );
       currentWireTicker.destroy();
@@ -107,6 +127,7 @@ $(window).on("click", () => {
       currentHeight = null;
       currentHorizontalStart = null;
       currentVerticalStart = null;
+      currentPointsFilled = [];
     }
   }
 });
@@ -117,6 +138,11 @@ function drawWire(wireTicker: PIXI.Ticker) {
 
   wireTicker.add((time) => {
     if (currentlyDrawing && CurrentAction === ACTIONS.Wire) {
+      const contains = pointsListContains(currentPointsFilled, mousePosition);
+      if (!contains) {
+        currentPointsFilled.push(new PIXI.Point(mousePosition.x, mousePosition.y));
+      }
+
       wireGraphics.clear();
       const width = mousePosition.x - wireStart.x;
       currentWidth = width;
@@ -171,4 +197,48 @@ function drawWire(wireTicker: PIXI.Ticker) {
   wireTicker.start();
 
   app.stage.addChild(wireGraphics);
+  return wireGraphics;
+}
+
+function pointsListContains(pointsList: PIXI.Point[], checkPoint: PIXI.Point) {
+  for (let i = 0; i < pointsList.length; i++) {
+    const point = pointsList[i];
+    if (point.x === checkPoint.x && point.y === checkPoint.y) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function getWirePoints(
+  wireStart: PIXI.Point,
+  width: number,
+  height: number,
+  flipped: boolean,
+  gridSize: number = 20
+): PIXI.Point[] {
+  const points: PIXI.Point[] = [];
+
+  const hStart = flipped ? wireStart : new PIXI.Point(wireStart.x, wireStart.y + height);
+  const vStart = flipped ? new PIXI.Point(wireStart.x + width, wireStart.y) : wireStart;
+
+  // All horizontal points
+  const hSteps = Math.abs(width) / gridSize;
+  for (let i = 0; i <= hSteps; i++) {
+    points.push(new PIXI.Point(
+      hStart.x + (width >= 0 ? i : -i) * gridSize,
+      hStart.y
+    ));
+  }
+
+  // All vertical points
+  const vSteps = Math.abs(height) / gridSize;
+  for (let i = 0; i <= vSteps; i++) {
+    points.push(new PIXI.Point(
+      vStart.x,
+      vStart.y + (height >= 0 ? i : -i) * gridSize
+    ));
+  }
+
+  return points;
 }
