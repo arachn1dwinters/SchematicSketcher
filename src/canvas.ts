@@ -50,19 +50,29 @@ app.stage.addChild(bgGraphics);
 
 // Wires
 
+enum WireDirection {
+  Horizontal,
+  Vertical,
+}
+
+interface wirePoint {
+  position: PIXI.Point;
+  direction: WireDirection;
+}
+
 class Wire {
   horizontalStart: PIXI.Point;
   verticalStart: PIXI.Point;
   width: number;
   height: number;
-  pointsFilled: PIXI.Point[];
+  pointsFilled: wirePoint[];
 
   constructor(
     horizontalStart: PIXI.Point,
     verticalStart: PIXI.Point,
     width: number,
     height: number,
-    pointsFilled: PIXI.Point[],
+    pointsFilled: wirePoint[],
   ) {
     this.horizontalStart = horizontalStart;
     this.verticalStart = verticalStart;
@@ -96,26 +106,32 @@ function getWirePoints(
   height: number,
   flipped: boolean,
   gridSize: number = 20
-): PIXI.Point[] {
-  const points: PIXI.Point[] = [];
+): wirePoint[] {
+  const points: wirePoint[] = [];
 
   const hStart = flipped ? wireStart : new PIXI.Point(wireStart.x, wireStart.y + height);
   const vStart = flipped ? new PIXI.Point(wireStart.x + width, wireStart.y) : wireStart;
 
   const hSteps = Math.abs(width) / gridSize;
   for (let i = 0; i <= hSteps; i++) {
-    points.push(new PIXI.Point(
-      hStart.x + (width >= 0 ? i : -i) * gridSize,
-      hStart.y
-    ));
+    points.push( {
+      position: new PIXI.Point(
+        hStart.x + (width >= 0 ? i : -i) * gridSize,
+        hStart.y
+      ),
+      direction: WireDirection.Horizontal
+    });
   }
 
   const vSteps = Math.abs(height) / gridSize;
   for (let i = 0; i <= vSteps; i++) {
-    points.push(new PIXI.Point(
-      vStart.x,
-      vStart.y + (height >= 0 ? i : -i) * gridSize
-    ));
+    points.push({ 
+      position: new PIXI.Point(
+        vStart.x,
+        vStart.y + (height >= 0 ? i : -i) * gridSize
+      ),
+      direction: WireDirection.Vertical
+    });
   }
 
   return points;
@@ -134,8 +150,8 @@ $(window).on("click", () => {
 
       for (const wire of wires) {
         for (const point of finalizedPoints) {
-          if (pointsListContains(wire.pointsFilled, point)) {
-            currentWireGraphics.circle(point.x + 3, point.y + 3, 8);
+          if (intersectingPoints(wire.pointsFilled, point)) {
+            currentWireGraphics.circle(point.position.x + 3, point.position.y + 3, 8);
             currentWireGraphics.fill(0x222021);
           }
         }
@@ -219,11 +235,14 @@ function drawWire(wireTicker: PIXI.Ticker) {
   return wireGraphics;
 }
 
-function pointsListContains(pointsList: PIXI.Point[], checkPoint: PIXI.Point) {
+function intersectingPoints(pointsList: wirePoint[], checkPoint: wirePoint) {
   for (let i = 0; i < pointsList.length; i++) {
     const point = pointsList[i];
-    if (point.x === checkPoint.x && point.y === checkPoint.y) {
+    if (point.position.x === checkPoint.position.x
+        && point.position.y === checkPoint.position.y
+        && point.direction !== checkPoint.direction) {
       return true;
+      console.log("hello");
     }
   }
   return false;
