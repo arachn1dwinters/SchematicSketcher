@@ -135,8 +135,8 @@ $(window).on("click", () => {
       for (const wire of wires) {
         for (const point of finalizedPoints) {
           if (pointsListContains(wire.pointsFilled, point)) {
-            currentWireGraphics.circle(point.x, point.y, 10);
-            currentWireGraphics.fill(0x35cc5a);
+            currentWireGraphics.circle(point.x + 3, point.y + 3, 8);
+            currentWireGraphics.fill(0x222021);
           }
         }
       }
@@ -169,7 +169,7 @@ function drawWire(wireTicker: PIXI.Ticker) {
       currentWidth = width;
       const height = mousePosition.y - wireStart.y;
       currentHeight = height;
-      const thickness = 10;
+      const thickness = 6;
       const horizontalWireStart = flipped
         ? wireStart
         : new PIXI.Point(wireStart.x, mousePosition.y);
@@ -210,7 +210,7 @@ function drawWire(wireTicker: PIXI.Ticker) {
           20,
         );
       }
-      wireGraphics.fill(0x35cc5a);
+      wireGraphics.fill(0x222021);
     }
   });
   wireTicker.start();
