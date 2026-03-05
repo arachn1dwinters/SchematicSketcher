@@ -49,7 +49,6 @@ for (let i = 0; i < 100; i++) {
 app.stage.addChild(bgGraphics);
 
 // Wires
-
 enum WireDirection {
   Horizontal,
   Vertical,
@@ -58,6 +57,7 @@ enum WireDirection {
 interface wirePoint {
   position: PIXI.Point;
   direction: WireDirection;
+  end: boolean;
 }
 
 class Wire {
@@ -119,7 +119,8 @@ function getWirePoints(
         hStart.x + (width >= 0 ? i : -i) * gridSize,
         hStart.y
       ),
-      direction: WireDirection.Horizontal
+      direction: WireDirection.Horizontal,
+      end: i === 0 || i === hSteps,
     });
   }
 
@@ -130,7 +131,8 @@ function getWirePoints(
         vStart.x,
         vStart.y + (height >= 0 ? i : -i) * gridSize
       ),
-      direction: WireDirection.Vertical
+      direction: WireDirection.Vertical,
+      end: i === 0 || i === vSteps,
     });
   }
 
@@ -240,7 +242,8 @@ function intersectingPoints(pointsList: wirePoint[], checkPoint: wirePoint) {
     const point = pointsList[i];
     if (point.position.x === checkPoint.position.x
         && point.position.y === checkPoint.position.y
-        && point.direction !== checkPoint.direction) {
+        && point.direction !== checkPoint.direction
+        && !(point.end && checkPoint.end)) {
       return true;
       console.log("hello");
     }
