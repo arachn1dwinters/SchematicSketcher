@@ -169,10 +169,10 @@ $(window).on("click", () => {
         ),
       );
       currentWireTicker.destroy();
-      currentWidth = null;
-      currentHeight = null;
-      currentHorizontalStart = null;
-      currentVerticalStart = null;
+      currentWidth = new PIXI.Point(-1, -1);
+      currentHeight = new PIXI.Point(-1, -1);
+      currentHorizontalStart = new PIXI.Point(-1, -1);
+      currentVerticalStart = new PIXI.Point(-1, -1);
     }
   }
 });
@@ -245,7 +245,6 @@ function intersectingPoints(pointsList: wirePoint[], checkPoint: wirePoint) {
         && point.direction !== checkPoint.direction
         && !(point.end && checkPoint.end)) {
       return true;
-      console.log("hello");
     }
   }
   return false;
