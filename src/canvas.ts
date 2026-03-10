@@ -5,7 +5,7 @@ import { $ } from "jquery";
 let mousePosition = new PIXI.Point(-1, -1);
 $(document).mousemove((e) => {
   mousePosition.x = e.pageX - (e.pageX % 20);
-  mousePosition.y = e.pageY - (e.pageY % 20);
+  mousePosition.y = e.pageY - (e.pageY % 20) - 38.5;
 });
 
 // Potential user actions
@@ -169,8 +169,8 @@ $(window).on("click", () => {
         ),
       );
       currentWireTicker.destroy();
-      currentWidth = new PIXI.Point(-1, -1);
-      currentHeight = new PIXI.Point(-1, -1);
+      currentWidth = 0;
+      currentHeight = 0;
       currentHorizontalStart = new PIXI.Point(-1, -1);
       currentVerticalStart = new PIXI.Point(-1, -1);
     }
@@ -180,7 +180,7 @@ $(window).on("click", () => {
 function drawWire(wireTicker: PIXI.Ticker) {
   const wireGraphics = new PIXI.Graphics();
 
-  wireTicker.add((time) => {
+  wireTicker.add(() => {
     if (currentlyDrawing && CurrentAction === ACTIONS.Wire) {
       wireGraphics.clear();
       const width = mousePosition.x - wireStart.x;
@@ -245,6 +245,7 @@ function intersectingPoints(pointsList: wirePoint[], checkPoint: wirePoint) {
         && point.direction !== checkPoint.direction
         && !(point.end && checkPoint.end)) {
       return true;
+      console.log("hello");
     }
   }
   return false;
