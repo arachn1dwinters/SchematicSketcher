@@ -10,14 +10,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "gsap": "^3.14.2",
     "jquery": "^4.0.0",
     "pixi-viewport": "^5.1.0",
     "pixi.js": "^8.17.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "vite-plugin-svgr": "^4.5.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@svgr/core": "^8.1.0",
     "@types/node": "^24.10.1",
     "@types/react": "^18.3.28",
     "@types/react-dom": "^18.3.7",
