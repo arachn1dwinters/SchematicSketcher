@@ -3,11 +3,14 @@ import { createRoot } from "react-dom/client";
 import { useRef, useEffect, useState } from "react";
 import { gsap } from "gsap";
 import Switch from "./assets/ComponentBankSymbol.svg?react";
+import { ComponentBank } from "./ComponentBank";
 
 function App() {
+  const [bankOpen, setBankOpen] = useState(false);
+
   const headerStyle = {
-    position: "sticky",
     top: "0",
+    height: "50px",
     backgroundColor: "#ffffea",
     display: "flex",
     justifyContent: "right",
@@ -17,6 +20,7 @@ function App() {
   const imageBankSymbolStyle = {
     width: "75px",
     height: "auto",
+    cursor: "pointer",
   };
 
   const container = useRef(null);
@@ -35,12 +39,21 @@ function App() {
     }
   });
 
+  const openBank = () => {
+    setBankOpen(!bankOpen);
+  }
+
   return (
-    <header style={headerStyle}>
+    <div style={headerStyle}>
       <div ref={container}>
-        <Switch style={imageBankSymbolStyle}/>
+        <Switch
+          onClick={openBank} 
+          style={imageBankSymbolStyle}/>
       </div>
-    </header>
+    { bankOpen ??
+      <ComponentBank />
+    }
+    </div>
   );
 }
 

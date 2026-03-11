@@ -3,7 +3,7 @@ import { $ } from "jquery";
 
 // Get current mouse position and transfer it to grid system
 let mousePosition = new PIXI.Point(-1, -1);
-$(document).mousemove((e) => {
+$("body").mousemove((e) => {
   mousePosition.x = e.pageX - (e.pageX % 20);
   mousePosition.y = e.pageY - (e.pageY % 20) - 38.5;
 });
@@ -26,7 +26,7 @@ await app.init({
   antialias: true,
 });
 
-document.body.appendChild(app.canvas);
+document.getElementById("pixiCanvas")?.appendChild(app.canvas);
 
 // Draw grid of dots
 const bgGraphics = new PIXI.Graphics();
@@ -139,7 +139,7 @@ function getWirePoints(
   return points;
 }
 
-$(window).on("click", () => {
+$("#pixiCanvas").on("click", () => {
   if (CurrentAction === ACTIONS.Wire) {
     currentlyDrawing = !currentlyDrawing;
     if (currentlyDrawing) {
