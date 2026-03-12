@@ -44,15 +44,17 @@ function App() {
   }
 
   return (
-    <div style={headerStyle}>
-      <div ref={container}>
-        <Switch
-          onClick={openBank} 
-          style={imageBankSymbolStyle}/>
+    <div>
+      <div style={headerStyle}>
+        <div ref={container}>
+          <Switch
+            onClick={openBank} 
+            style={imageBankSymbolStyle}/>
+        </div>
       </div>
-    { bankOpen ??
-      <ComponentBank />
-    }
+      { bankOpen &&
+        <ComponentBank />
+      }
     </div>
   );
 }

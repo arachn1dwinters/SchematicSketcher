@@ -3,9 +3,9 @@ import { $ } from "jquery";
 
 // Get current mouse position and transfer it to grid system
 let mousePosition = new PIXI.Point(-1, -1);
-$("body").mousemove((e) => {
-  mousePosition.x = e.pageX - (e.pageX % 20);
-  mousePosition.y = e.pageY - (e.pageY % 20) - 38.5;
+$("#pixiCanvas").mousemove((e) => {
+  mousePosition.x = e.offsetX - (e.offsetX % 20);
+  mousePosition.y = e.offsetY - (e.offsetY % 20);
 });
 
 // Potential user actions
@@ -245,7 +245,6 @@ function intersectingPoints(pointsList: wirePoint[], checkPoint: wirePoint) {
         && point.direction !== checkPoint.direction
         && !(point.end && checkPoint.end)) {
       return true;
-      console.log("hello");
     }
   }
   return false;
